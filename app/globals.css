@@ -1,0 +1,55 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-background: #faf9f6;
+  --color-foreground: #0a0a0a;
+  --color-muted: #5c5c5c;
+  --color-muted-foreground: #737373;
+  --color-gold: #b8860b;
+  --color-gold-light: #d4a84b;
+  --color-gold-dark: #8a6a0a;
+  --color-ink: #0f0f0f;
+  --color-surface: #ffffff;
+  --color-border: #e8e6e0;
+  --font-sans: var(--font-poppins), "Poppins", ui-sans-serif, system-ui, sans-serif;
+  /* Headings use `font-serif` in components — keep aligned with brand sans (Poppins) */
+  --font-serif: var(--font-poppins), "Poppins", ui-sans-serif, system-ui, sans-serif;
+  --font-script: var(--font-great-vibes), "Great Vibes", cursive;
+  --shadow-soft: 0 22px 60px -24px rgba(15, 15, 15, 0.12);
+  --shadow-card: 0 4px 24px -8px rgba(15, 15, 15, 0.08);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    overflow-x: clip;
+  }
+  body {
+    min-width: 0;
+    background: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+  }
+  ::selection {
+    background: color-mix(in srgb, var(--color-gold) 30%, white);
+  }
+}
+
+@utility text-balance {
+  text-wrap: balance;
+}
+
+@utility no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Topographic subtle pattern */
+.bg-topo {
+  background-image: url("data:image/svg+xml,%3Csvg width='200' height='200' viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 120 Q 50 100 100 120 T 200 100' fill='none' stroke='%23e0ddd4' stroke-width='0.5'/%3E%3Cpath d='M0 150 Q 60 130 120 150 T 200 130' fill='none' stroke='%23e8e4da' stroke-width='0.4'/%3E%3C/svg%3E");
+  background-size: 320px 320px;
+  opacity: 0.5;
+}
