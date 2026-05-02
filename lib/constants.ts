@@ -14,7 +14,7 @@ export const SITE = {
 export const SOCIAL = {
   instagram: "https://instagram.com",
   facebook: "https://facebook.com",
-  whatsapp: "https://wa.me/2348100000000",
+  whatsapp: "https://wa.me/2348055447701",
   youtube: "https://youtube.com",
 } as const;
 
