@@ -3,17 +3,33 @@ import Link from "next/link";
 import { CheckCircle2 } from "lucide-react";
 import { SiteShell } from "@/components/layout/site-shell";
 import { Button } from "@/components/ui/button";
+import { runPaymentReturnHandlers } from "@/lib/payment-return";
 
 export const metadata: Metadata = {
   title: "Booking received",
   robots: { index: false, follow: false },
 };
 
-type Props = { searchParams: Promise<{ ref?: string; demo?: string; trxref?: string }> };
+type Props = {
+  searchParams: Promise<{
+    ref?: string;
+    demo?: string;
+    trxref?: string;
+    transaction_id?: string;
+    tx_ref?: string;
+    status?: string;
+    reference?: string;
+  }>;
+};
 
 export default async function BookingConfirmationPage({ searchParams }: Props) {
   const p = await searchParams;
-  const ref = p.ref || p.trxref || "—";
+  await runPaymentReturnHandlers(p);
+
+  const ref = p.ref || p.tx_ref || p.reference || p.trxref || "—";
+  const demo = p.demo === "1" || p.demo === "true";
+  const paid = Boolean(p.transaction_id || p.reference || p.trxref || p.ref);
+
   return (
     <SiteShell>
       <div className="mx-auto max-w-xl px-4 py-20 text-center">
@@ -23,8 +39,13 @@ export default async function BookingConfirmationPage({ searchParams }: Props) {
         <h1 className="mt-4 font-serif text-3xl text-ink">You&apos;re on the calendar</h1>
         <p className="mt-2 text-sm text-muted">
           Reference <span className="font-mono text-ink">{ref}</span>
-          {p.demo ? " — preview path (no charge)" : null}
+          {demo ? " — preview (no charge)" : null}
         </p>
+        {!demo && paid ? (
+          <p className="mt-2 text-sm text-emerald-800">
+            If payment succeeded, a confirmation has been sent to your email.
+          </p>
+        ) : null}
         <p className="mt-4 text-sm text-muted">
           Our desk will confirm your dates, logistics add-ons, and final balance — usually within a few working hours.
         </p>

@@ -1,11 +1,17 @@
 "use client";
 
+import Link from "next/link";
+import { useMemo, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import { createPackage } from "@/actions/admin-package";
+import { CountryStateSelects } from "@/components/admin/country-state-selects";
+import { SupportedLocationPairSelect } from "@/components/admin/supported-location-pair-select";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { CoverImageInput } from "@/components/admin/cover-image-input";
+import { slugify } from "@/lib/utils";
 function Submit() {
   const { pending } = useFormStatus();
   return (
@@ -15,32 +21,52 @@ function Submit() {
   );
 }
 
-export function PackageForm() {
+export type PackageLocationOption = { id: string; label: string; country: string; region: string };
+
+export function PackageForm({ locations = [] }: { locations?: PackageLocationOption[] }) {
   const [state, formAction] = useFormState(createPackage, { ok: false });
+  const hasLocations = locations.length > 0;
+  const [title, setTitle] = useState("");
+  const slug = useMemo(() => slugify(title), [title]);
+
   return (
     <form action={formAction} className="space-y-3">
       <div>
-        <Label>Title</Label>
-        <Input name="title" required className="mt-1" />
+        <Label htmlFor="pkg-title">Title</Label>
+        <Input
+          id="pkg-title"
+          name="title"
+          required
+          minLength={2}
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          className="mt-1"
+        />
+        <input type="hidden" name="slug" value={slug} />
+        <p className="mt-1 text-xs text-zinc-500">
+          URL slug: <span className="font-mono text-zinc-700">{slug || "…"}</span>
+        </p>
       </div>
       <div>
-        <Label>Slug (lowercase, hyphens)</Label>
-        <Input name="slug" required className="mt-1" placeholder="lagos-long-weekend" />
+        <p className="text-sm font-medium text-zinc-800">Tour location</p>
+        {hasLocations ? (
+          <div className="mt-2">
+            <SupportedLocationPairSelect locations={locations} />
+          </div>
+        ) : (
+          <div className="mt-2 space-y-2">
+            <p className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-900">
+              No saved tour locations yet. Pick a country and state below, or add curated pairs under{" "}
+              <Link href="/admin/locations" className="font-medium underline">
+                Tour locations
+              </Link>
+              .
+            </p>
+            <CountryStateSelects idPrefix="pkg-new" />
+          </div>
+        )}
       </div>
-      <div className="grid gap-3 sm:grid-cols-2">
-        <div>
-          <Label>Destination</Label>
-          <Input name="destination" required className="mt-1" />
-        </div>
-        <div>
-          <Label>Hub / city</Label>
-          <Input name="city" required className="mt-1" />
-        </div>
-      </div>
-      <div>
-        <Label>Cover image URL (Cloudinary or HTTPS)</Label>
-        <Input name="coverImage" type="url" required className="mt-1" />
-      </div>
+      <CoverImageInput />
       <div>
         <Label>Short summary</Label>
         <Textarea name="shortSummary" required className="mt-1" rows={3} />

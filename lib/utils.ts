@@ -12,3 +12,15 @@ export function formatNaira(n: number) {
     maximumFractionDigits: 0,
   }).format(n);
 }
+
+/** Lowercase slug with hyphens; matches package slug validation (a-z, 0-9, hyphens). */
+export function slugify(text: string): string {
+  return text
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/\p{M}/gu, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .replace(/-+/g, "-");
+}

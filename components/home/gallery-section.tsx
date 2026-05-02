@@ -1,8 +1,9 @@
 import Image from "next/image";
 import { SectionFade } from "@/components/motion/section-fade";
-import { galleryMoments } from "@/lib/gallery-moments";
+import { getHomeGallery } from "@/lib/data/gallery-home";
 
-export function GallerySection() {
+export async function GallerySection() {
+  const moments = await getHomeGallery();
   return (
     <section className="bg-[#f6f2ea] py-20 md:py-24">
       <div className="mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
@@ -15,8 +16,8 @@ export function GallerySection() {
           </p>
         </SectionFade>
         <div className="mt-8 grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
-          {galleryMoments.map((item) => (
-            <div key={item.src} className="relative aspect-[3/4] overflow-hidden rounded-2xl border border-gold/10">
+          {moments.map((item, index) => (
+            <div key={`${item.src}-${index}`} className="relative aspect-[3/4] overflow-hidden rounded-2xl border border-gold/10">
               <Image
                 src={item.src}
                 alt={item.alt}

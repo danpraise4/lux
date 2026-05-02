@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { connectDB, isDbConfigured } from "@/lib/mongodb";
 import { customTripSchema } from "@/lib/validators";
+import { sendCustomTripEmails } from "@/lib/email/inquiry-mail";
 import CustomTripRequest from "@/models/CustomTripRequest";
 
 export async function submitCustomTrip(
@@ -41,10 +42,15 @@ export async function submitCustomTrip(
     revalidatePath("/custom-trip");
     return { ok: true };
   }
-  await CustomTripRequest.create({
+  const doc = await CustomTripRequest.create({
     ...rest,
     travelStart: travelStart ? new Date(travelStart) : undefined,
     travelEnd: travelEnd ? new Date(travelEnd) : undefined,
+  });
+  await sendCustomTripEmails({
+    ...rest,
+    travelStart: doc.travelStart ?? undefined,
+    travelEnd: doc.travelEnd ?? undefined,
   });
   revalidatePath("/custom-trip");
   return { ok: true };

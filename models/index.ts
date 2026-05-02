@@ -9,6 +9,7 @@ import "./CorporateLead";
 import "./Review";
 import "./Newsletter";
 import "./GalleryImage";
+import "./SupportedLocation";
 
 export { default as User } from "./User";
 export { default as Admin } from "./Admin";
@@ -21,3 +22,4 @@ export { default as CorporateLead } from "./CorporateLead";
 export { default as Review } from "./Review";
 export { default as Newsletter } from "./Newsletter";
 export { default as GalleryImage } from "./GalleryImage";
+export { default as SupportedLocation } from "./SupportedLocation";

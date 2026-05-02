@@ -31,6 +31,11 @@ export default async function PopularToursSection() {
         </div>
 
         <div className="mt-14 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+          {all.length === 0 ? (
+            <p className="col-span-full text-center text-sm text-muted">
+              Packages will appear here once they are published.
+            </p>
+          ) : null}
           {tours.map((pkg) => {
             const rating = displayRating(pkg.slug);
             const fullStars = Math.floor(rating);

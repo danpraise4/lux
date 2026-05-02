@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { connectDB, isDbConfigured } from "@/lib/mongodb";
 import { newsletterSchema } from "@/lib/validators";
+import { sendNewsletterSignupEmails } from "@/lib/email/inquiry-mail";
 import Newsletter from "@/models/Newsletter";
 
 export async function newsletterSubscribe(
@@ -25,6 +26,7 @@ export async function newsletterSubscribe(
       return { ok: true };
     }
     await Newsletter.create({ email: parsed.data.email });
+    await sendNewsletterSignupEmails(parsed.data.email);
   } catch {
     // duplicate or network — still return ok to avoid leaking info
   }

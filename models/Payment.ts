@@ -8,6 +8,8 @@ const paymentSchema = new mongoose.Schema(
     status: { type: String, enum: ["pending", "success", "failed", "reversed"], default: "pending" },
     paystackRef: { type: String, default: "" },
     paystackAccessCode: { type: String, default: "" },
+    provider: { type: String, enum: ["paystack", "flutterwave"], default: "paystack" },
+    flutterwaveTransactionId: { type: String, default: "" },
     paidAt: { type: Date },
   },
   { timestamps: true }

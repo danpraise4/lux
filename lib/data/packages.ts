@@ -38,7 +38,6 @@ export async function fetchPackages(): Promise<PublicPackage[]> {
     const conn = await connectDB();
     if (!conn) return demoPackages;
     const list = await PackageModel.find().sort({ createdAt: -1 }).lean();
-    if (!list.length) return demoPackages;
     return list.map((d) => mapDoc(d as unknown as Record<string, unknown>));
   } catch {
     return demoPackages;
@@ -56,7 +55,7 @@ export async function fetchPackageBySlug(slug: string): Promise<PublicPackage | 
     }
     const p = await PackageModel.findOne({ slug }).lean();
     if (!p) {
-      return getDemoBySlug(slug) || null;
+      return null;
     }
     return mapDoc(p as unknown as Record<string, unknown>);
   } catch {

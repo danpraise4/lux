@@ -117,7 +117,7 @@ export function SiteFooter() {
               </li>
             ))}
             <li>
-              <Link className="hover:text-gold" href="mailto:hello@nmaluxetravel.com">
+              <Link className="hover:text-gold" href="mailto:hello@nmaluxe.com.ng">
                 Contact
               </Link>
             </li>
@@ -155,9 +155,9 @@ export function SiteFooter() {
           </a>
           <a
             className="block break-all text-sm font-medium text-ink sm:break-words"
-            href="mailto:hello@nmaluxetravel.com"
+            href="mailto:hello@nmaluxe.com.ng"
           >
-            hello@nmaluxetravel.com
+            hello@nmaluxe.com.ng
           </a>
         </div>
       </div>

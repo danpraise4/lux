@@ -1,11 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import Link from "next/link";
+import { useState, Suspense } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+
+function PasswordResetBanner() {
+  const sp = useSearchParams();
+  if (sp.get("reset") !== "done") return null;
+  return (
+    <p className="rounded-lg border border-emerald-400/30 bg-emerald-950/40 p-3 text-sm text-emerald-200">
+      Password updated. Sign in with your new password.
+    </p>
+  );
+}
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -34,8 +45,14 @@ export default function AdminLoginPage() {
       <form onSubmit={onSubmit} className="w-full max-w-sm space-y-4 rounded-2xl border border-white/10 bg-white/5 p-8 backdrop-blur">
         <div>
           <p className="text-xs uppercase tracking-[0.2em] text-white/50">NMA Luxe</p>
-          <h1 className="mt-2 font-serif text-2xl">Admin</h1>
+          <h1 className="mt-2 font-serif text-2xl">Staff sign-in</h1>
+          <p className="mt-2 text-xs leading-relaxed text-white/55">
+            Staff accounts are issued by your team. There is no self-registration on this page.
+          </p>
         </div>
+        <Suspense fallback={null}>
+          <PasswordResetBanner />
+        </Suspense>
         <div>
           <Label htmlFor="email" className="text-white/80">
             Email
@@ -43,9 +60,14 @@ export default function AdminLoginPage() {
           <Input id="email" name="email" type="email" required className="mt-1 border-white/20 bg-white/5 text-white" />
         </div>
         <div>
-          <Label htmlFor="password" className="text-white/80">
-            Password
-          </Label>
+          <div className="flex items-center justify-between gap-2">
+            <Label htmlFor="password" className="text-white/80">
+              Password
+            </Label>
+            <Link href="/admin/forgot-password" className="text-xs text-gold hover:underline">
+              Forgot password?
+            </Link>
+          </div>
           <Input id="password" name="password" type="password" required className="mt-1 border-white/20 bg-white/5 text-white" />
         </div>
         {err && <p className="text-sm text-red-400">{err}</p>}

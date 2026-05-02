@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { connectDB, isDbConfigured } from "@/lib/mongodb";
 import { corporateLeadSchema } from "@/lib/validators";
+import { sendCorporateLeadEmails } from "@/lib/email/inquiry-mail";
 import CorporateLead from "@/models/CorporateLead";
 
 export async function submitCorporateProposal(
@@ -31,6 +32,7 @@ export async function submitCorporateProposal(
     return { ok: true };
   }
   await CorporateLead.create(parsed.data);
+  await sendCorporateLeadEmails(parsed.data);
   revalidatePath("/corporate-travel");
   return { ok: true };
 }

@@ -185,7 +185,13 @@ export function PackagesView({ initial }: { initial: PublicPackage[] }) {
             </Card>
           </MotionCard>
         ))}
-        {!list.length && <p className="text-sm text-muted">No exact matches — try &quot;All&quot; filters or call the desk.</p>}
+        {!list.length && (
+          <p className="col-span-full text-center text-sm text-muted">
+            {initial.length === 0
+              ? "No tours published yet."
+              : 'No exact matches — try widening filters or contact the desk.'}
+          </p>
+        )}
       </div>
     </div>
   );

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { SiteShell } from "@/components/layout/site-shell";
 import { HomeHero } from "@/components/home/hero";
 import { IntroStrip } from "@/components/home/intro-strip";
@@ -36,7 +37,9 @@ export default function HomePage() {
       <CorporateBlock />
       <GroupTravelBlock />
       <Testimonials />
-      <GallerySection />
+      <Suspense fallback={<div className="min-h-[280px] animate-pulse bg-[#f6f2ea]" aria-hidden />}>
+        <GallerySection />
+      </Suspense>
       <FinalCta />
     </SiteShell>
   );

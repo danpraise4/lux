@@ -13,7 +13,7 @@ export default async function AdminPackagesPage() {
           <Link href="/admin/packages/new">New package</Link>
         </Button>
       </div>
-      <p className="text-sm text-zinc-600">List merges MongoDB with demo seed when the database is empty or unavailable.</p>
+      <p className="text-sm text-zinc-600">Tours shown on the public site. Add or edit packages from here.</p>
       <div className="mt-6 overflow-x-auto rounded-xl border border-zinc-200 bg-white">
         <table className="w-full min-w-[640px] text-left text-sm">
           <thead className="border-b border-zinc-200 bg-zinc-50 text-xs uppercase text-zinc-500">

@@ -24,7 +24,7 @@ const steps: { id: Step; title: string }[] = [
   { id: 4, title: "Logistics" },
   { id: 5, title: "Details" },
   { id: 6, title: "Terms" },
-  { id: 7, title: "Deposit" },
+  { id: 7, title: "Payment" },
 ];
 
 export function BookingWizard({ packages }: { packages: PublicPackage[] }) {
@@ -48,10 +48,12 @@ export function BookingWizard({ packages }: { packages: PublicPackage[] }) {
   const [leadPhone, setLeadPhone] = useState("");
   const [terms, setTerms] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [payMode, setPayMode] = useState<"deposit" | "full">("deposit");
 
   const selected = useMemo(() => packages.find((p) => p.slug === pkgSlug), [packages, pkgSlug]);
   const total = selected ? selected.priceFrom * travelers : 0;
   const deposit = Math.round(total * DEFAULT_DEPOSIT_PERCENT);
+  const dueToday = payMode === "full" ? total : deposit;
 
   function next() {
     setError(null);
@@ -94,12 +96,14 @@ export function BookingWizard({ packages }: { packages: PublicPackage[] }) {
           leadEmail,
           leadPhone,
           termsAccepted: terms,
+          paymentChoice: payMode,
         }),
       });
       const data = (await res.json()) as {
         ok?: boolean;
         reference?: string;
         depositAmount?: number;
+        amountDueNow?: number;
         email?: string;
         error?: string;
       };
@@ -107,13 +111,21 @@ export function BookingWizard({ packages }: { packages: PublicPackage[] }) {
         setError(data.error || "Could not create booking");
         return;
       }
-      const init = await fetch("/api/paystack/initialize", {
+      const amountToCharge = data.amountDueNow ?? data.depositAmount;
+      if (amountToCharge == null || amountToCharge <= 0) {
+        setError("Invalid payment amount");
+        return;
+      }
+      const init = await fetch("/api/payments/initialize", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: data.email,
-          amount: data.depositAmount,
+          amount: amountToCharge,
           reference: data.reference,
+          name: leadName,
+          phone: leadPhone,
+          checkoutKind: payMode,
         }),
       });
       const pay = (await init.json()) as { authorizationUrl?: string; demo?: boolean; error?: string };
@@ -257,16 +269,54 @@ export function BookingWizard({ packages }: { packages: PublicPackage[] }) {
             )}
 
             {step === 7 && (
-              <motion.div key="s7" initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -12 }} className="space-y-2">
+              <motion.div key="s7" initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -12 }} className="space-y-4">
                 <p className="text-sm text-muted">Trip estimate (before logistics adjustments)</p>
                 <p className="break-words font-serif text-2xl text-ink sm:text-3xl">{formatNaira(total)}</p>
+
+                <fieldset className="space-y-2">
+                  <legend className="text-sm font-medium text-ink">Pay today</legend>
+                  <label className="flex cursor-pointer gap-3 rounded-xl border border-border/80 bg-surface p-3 has-[:checked]:border-gold has-[:checked]:bg-gold/5">
+                    <input
+                      type="radio"
+                      name="payMode"
+                      className="mt-1"
+                      checked={payMode === "deposit"}
+                      onChange={() => setPayMode("deposit")}
+                    />
+                    <span className="min-w-0">
+                      <span className="font-medium text-ink">Deposit ({Math.round(DEFAULT_DEPOSIT_PERCENT * 100)}%)</span>
+                      <span className="mt-0.5 block text-sm text-muted">
+                        Pay {formatNaira(deposit)} now · Remaining balance before travel
+                      </span>
+                    </span>
+                  </label>
+                  <label className="flex cursor-pointer gap-3 rounded-xl border border-border/80 bg-surface p-3 has-[:checked]:border-gold has-[:checked]:bg-gold/5">
+                    <input
+                      type="radio"
+                      name="payMode"
+                      className="mt-1"
+                      checked={payMode === "full"}
+                      onChange={() => setPayMode("full")}
+                    />
+                    <span className="min-w-0">
+                      <span className="font-medium text-ink">Pay in full</span>
+                      <span className="mt-0.5 block text-sm text-muted">
+                        Pay {formatNaira(total)} now · Trip estimate settled (subject to final logistics quote)
+                      </span>
+                    </span>
+                  </label>
+                </fieldset>
+
                 <p className="text-sm">
-                  Due today ({Math.round(DEFAULT_DEPOSIT_PERCENT * 100)}% deposit):
-                  <span className="ml-1 font-semibold text-gold-dark">{formatNaira(deposit)}</span>
+                  Due at checkout:{" "}
+                  <span className="font-semibold text-gold-dark">{formatNaira(dueToday)}</span>
                 </p>
-                <p className="text-xs text-muted">You&apos;ll complete payment on Paystack. If Paystack is not configured, you&apos;ll see a preview confirmation path.</p>
-                <Button className="mt-4 w-full" variant="gold" size="lg" onClick={pay} disabled={pending}>
-                  {pending ? "Processing…" : "Pay deposit securely"}
+                <p className="text-xs text-muted">
+                  You&apos;ll complete payment on our secure checkout. If checkout isn&apos;t available, you&apos;ll still see a
+                  confirmation summary.
+                </p>
+                <Button className="mt-2 w-full" variant="gold" size="lg" onClick={pay} disabled={pending}>
+                  {pending ? "Processing…" : payMode === "full" ? "Pay in full securely" : "Pay deposit securely"}
                 </Button>
                 <p className="text-xs text-muted text-center">Secure payment · SSL encrypted</p>
               </motion.div>

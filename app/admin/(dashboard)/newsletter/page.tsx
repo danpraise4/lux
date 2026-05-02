@@ -21,7 +21,7 @@ export default async function AdminNewsletterPage() {
             </li>
           ))
         ) : (
-          <li className="text-zinc-500">No signups in DB (or MONGODB_URI missing).</li>
+          <li className="text-zinc-600">No newsletter signups yet.</li>
         )}
       </ul>
     </div>

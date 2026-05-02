@@ -24,7 +24,7 @@ export default async function AdminCorporatePage() {
             </div>
           ))
         ) : (
-          <p className="text-sm text-zinc-500">No corporate leads in database.</p>
+          <p className="text-sm text-zinc-600">No corporate enquiries yet.</p>
         )}
       </div>
     </div>

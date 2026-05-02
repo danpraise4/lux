@@ -4,7 +4,9 @@ import { connectDB, isDbConfigured } from "@/lib/mongodb";
 import { fetchPackageBySlug } from "@/lib/data/packages";
 import { DEFAULT_DEPOSIT_PERCENT } from "@/lib/constants";
 import { makeBookingRef } from "@/lib/booking-ref";
+import { generateManageToken } from "@/lib/manage-token";
 import Booking from "@/models/Booking";
+import PackageModel from "@/models/Package";
 
 const bodySchema = z.object({
   packageSlug: z.string().min(1),
@@ -20,6 +22,7 @@ const bodySchema = z.object({
   leadEmail: z.string().email(),
   leadPhone: z.string().min(6),
   termsAccepted: z.boolean(),
+  paymentChoice: z.enum(["deposit", "full"]).default("deposit"),
 });
 
 function calcPrice(pkg: { priceFrom: number }, n: number) {
@@ -45,6 +48,8 @@ export async function POST(request: Request) {
   const balanceAmount = priceTotal - depositAmount;
   const reference = makeBookingRef();
   const startDate = new Date(b.startDate);
+  const paymentChoice = b.paymentChoice;
+  const amountDueNow = paymentChoice === "full" ? priceTotal : depositAmount;
 
   if (!isDbConfigured()) {
     return NextResponse.json({
@@ -54,6 +59,8 @@ export async function POST(request: Request) {
       depositAmount,
       balanceAmount,
       priceTotal,
+      amountDueNow,
+      paymentChoice,
       paystackKey: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || "",
       email: b.leadEmail,
     });
@@ -62,7 +69,10 @@ export async function POST(request: Request) {
   if (!conn) {
     return NextResponse.json({ error: "Database unavailable" }, { status: 503 });
   }
+  const pkgDoc = await PackageModel.findOne({ slug: pkg.slug }).select("_id").lean();
+  const manageToken = generateManageToken();
   const doc = await Booking.create({
+    package: pkgDoc?._id,
     packageSlug: pkg.slug,
     packageTitle: pkg.title,
     reference,
@@ -76,6 +86,8 @@ export async function POST(request: Request) {
     priceTotal,
     depositAmount,
     balanceAmount,
+    initialPaymentChoice: paymentChoice,
+    manageToken,
     status: "pending_deposit",
   });
   return NextResponse.json({
@@ -85,6 +97,8 @@ export async function POST(request: Request) {
     depositAmount,
     balanceAmount,
     priceTotal,
+    amountDueNow,
+    paymentChoice,
     paystackKey: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || "",
     email: b.leadEmail,
   });

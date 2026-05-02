@@ -28,6 +28,12 @@ const bookingSchema = new mongoose.Schema(
     depositAmount: { type: Number, required: true },
     balanceAmount: { type: Number, default: 0 },
     balancePaid: { type: Boolean, default: false },
+    /** First checkout: pay deposit only or full trip total */
+    initialPaymentChoice: { type: String, enum: ["deposit", "full"], default: "deposit" },
+    /** Guest self-service link segment — unique when set */
+    manageToken: { type: String, unique: true, sparse: true },
+    /** Optional note from admin when trip total is revised (shown to guest in email) */
+    pricingNoteFromAdmin: { type: String, default: "" },
   },
   { timestamps: true }
 );
