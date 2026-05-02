@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { isDbConfigured, connectDB } from "@/lib/mongodb";
 import Booking from "@/models/Booking";
 import Payment from "@/models/Payment";
@@ -65,9 +66,9 @@ export default async function AdminPaymentsPage() {
       <h1 className="font-serif text-2xl">Payments</h1>
       <p className="mt-2 max-w-prose text-sm text-zinc-600">
         Payments recorded from checkout appear here. Manage booking stages and balances under{" "}
-        <a className="font-medium text-gold-dark underline" href="/admin/bookings">
+        <Link className="font-medium text-gold-dark underline" href="/admin/bookings">
           Bookings
-        </a>
+        </Link>
         .
       </p>
 
