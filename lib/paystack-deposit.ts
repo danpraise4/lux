@@ -1,8 +1,9 @@
 import { completeSuccessfulGatewayPayment } from "@/lib/complete-payment";
+import { envPaystackSecretKey } from "@/lib/server-env";
 
 /** Verifies a Paystack transaction and completes payment (deposit, full, or balance — idempotent). */
 export async function completeDepositFromPaystackReference(reference: string): Promise<void> {
-  const secret = process.env.PAYSTACK_SECRET_KEY;
+  const secret = envPaystackSecretKey();
   if (!secret || !reference) return;
 
   const res = await fetch(`https://api.paystack.co/transaction/verify/${encodeURIComponent(reference)}`, {

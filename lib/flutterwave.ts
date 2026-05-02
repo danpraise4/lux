@@ -1,3 +1,5 @@
+import { envFlutterwaveSecretKey } from "@/lib/server-env";
+
 const FW_BASE = "https://api.flutterwave.com/v3";
 
 export type FlutterwaveVerifyResult =
@@ -8,7 +10,7 @@ export type FlutterwaveVerifyResult =
  * Verifies a transaction with Flutterwave (e.g. after redirect or in webhook follow-up).
  */
 export async function verifyFlutterwaveTransaction(transactionId: string | number): Promise<FlutterwaveVerifyResult> {
-  const secret = process.env.FLUTTERWAVE_SECRET_KEY;
+  const secret = envFlutterwaveSecretKey();
   if (!secret) {
     return { ok: false, error: "Payment service not configured" };
   }

@@ -6,6 +6,7 @@ import { isDbConfigured, connectDB } from "@/lib/mongodb";
 import Booking from "@/models/Booking";
 import { formatNaira } from "@/lib/utils";
 import { SITE } from "@/lib/constants";
+import { envSiteUrl } from "@/lib/server-env";
 import {
   BookingPricingForm,
   BookingStatusForm,
@@ -56,7 +57,7 @@ export default async function AdminBookingDetailPage({ params }: Props) {
     notFound();
   }
 
-  const manageBase = (process.env.NEXT_PUBLIC_SITE_URL || SITE.url || "").replace(/\/$/, "");
+  const manageBase = (envSiteUrl() || SITE.url || "").replace(/\/$/, "");
   const guestPayLink = doc.manageToken ? `${manageBase}/booking/manage/${encodeURIComponent(doc.manageToken)}` : "";
 
   const logistics = (doc.logistics || {}) as {

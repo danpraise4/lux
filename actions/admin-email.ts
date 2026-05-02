@@ -1,6 +1,8 @@
 "use server";
 
 import { auth } from "@/auth";
+import { getResendFromAddress } from "@/lib/email-from-env";
+import { envResendApiKey } from "@/lib/server-env";
 import { connectDB, isDbConfigured } from "@/lib/mongodb";
 import EmailLog from "@/models/EmailLog";
 import { z } from "zod";
@@ -49,8 +51,8 @@ export async function sendAdminFollowUpEmail(raw: unknown): Promise<SendFollowUp
     return { ok: false, error: "Something went wrong. Try again in a moment." };
   }
 
-  const key = process.env.RESEND_API_KEY;
-  const from = process.env.EMAIL_FROM || "NMA Luxe <notifications@example.com>";
+  const key = envResendApiKey();
+  const from = getResendFromAddress();
 
   if (!key) {
     await EmailLog.create({

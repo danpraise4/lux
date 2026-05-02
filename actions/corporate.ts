@@ -22,16 +22,12 @@ export async function submitCorporateProposal(
   if (!parsed.success) {
     return { ok: false, error: "Check required fields" };
   }
-  if (!isDbConfigured()) {
-    revalidatePath("/corporate-travel");
-    return { ok: true };
+  if (isDbConfigured()) {
+    const conn = await connectDB();
+    if (conn) {
+      await CorporateLead.create(parsed.data);
+    }
   }
-  const conn = await connectDB();
-  if (!conn) {
-    revalidatePath("/corporate-travel");
-    return { ok: true };
-  }
-  await CorporateLead.create(parsed.data);
   await sendCorporateLeadEmails(parsed.data);
   revalidatePath("/corporate-travel");
   return { ok: true };

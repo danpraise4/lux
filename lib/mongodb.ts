@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
-
-const MONGODB_URI = process.env.MONGODB_URI;
+import { envMongoUri } from "@/lib/server-env";
 
 interface MongooseCache {
   conn: typeof mongoose | null;
@@ -18,7 +17,8 @@ if (!global.mongoose) {
 }
 
 export async function connectDB(): Promise<typeof mongoose | null> {
-  if (!MONGODB_URI) {
+  const uri = envMongoUri();
+  if (!uri) {
     console.warn("MONGODB_URI is not set");
     return null;
   }
@@ -27,7 +27,7 @@ export async function connectDB(): Promise<typeof mongoose | null> {
   }
   if (!cached.promise) {
     const opts = { bufferCommands: false };
-    cached.promise = mongoose.connect(MONGODB_URI, opts);
+    cached.promise = mongoose.connect(uri, opts);
   }
   try {
     cached.conn = await cached.promise;
@@ -39,5 +39,5 @@ export async function connectDB(): Promise<typeof mongoose | null> {
 }
 
 export function isDbConfigured(): boolean {
-  return Boolean(MONGODB_URI);
+  return Boolean(envMongoUri());
 }

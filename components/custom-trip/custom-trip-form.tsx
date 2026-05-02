@@ -22,7 +22,9 @@ export function CustomTripForm() {
     return (
       <div className="rounded-2xl border border-gold/30 bg-gold/5 p-6 text-sm text-ink">
         <p className="font-serif text-xl">Request received.</p>
-        <p className="mt-2 text-muted">Our team will contact you with a tailored outline — usually within one business day.</p>
+        <p className="mt-2 text-muted">
+          We&apos;ve sent a confirmation to your email. Our travel desk will follow up — usually within one business day.
+        </p>
       </div>
     );
   }

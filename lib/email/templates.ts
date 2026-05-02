@@ -518,6 +518,32 @@ export function guestCorporateThankYouEmail(contactName: string) {
   };
 }
 
+export function guestCorporateStatusEmail(contactName: string, company: string, status: string) {
+  const lines: Record<string, string> = {
+    new: "We've logged your corporate enquiry and will review it shortly.",
+    in_review: "We're reviewing your brief — expect a detailed reply from our corporate desk soon.",
+    won: "Great news — we're marking this programme as confirmed with our team. We'll coordinate next steps by email.",
+    closed: "This enquiry is closed on our side. If anything changes, reply to this email or call us anytime.",
+  };
+  const body =
+    lines[status] ?? `Your corporate travel enquiry for ${company} is now: ${status.replace(/_/g, " ")}.`;
+  const inner =
+    emailParagraph(`Dear ${escapeHtml(contactName)},`) +
+    emailParagraph(body) +
+    emailMutedNote(`Company: ${escapeHtml(company)} · ${escapeHtml(SITE.email)}`);
+
+  return {
+    subject: `${brand} — Update · ${company} corporate enquiry`,
+    html: emailShell({
+      preheader: "An update from NMA Luxe.",
+      headline: "Corporate enquiry",
+      innerHtml: inner,
+      variant: "guest",
+    }),
+    text: `Dear ${contactName},\n\n${body}\n\n${brand}`,
+  };
+}
+
 export function adminCorporateLeadEmail(lead: {
   company: string;
   contactName: string;
@@ -570,6 +596,32 @@ export function guestCustomTripThankYouEmail(name: string) {
   };
 }
 
+/** Quick update when staff changes pipeline stage from admin (optional send). */
+export function guestCustomTripStatusEmail(name: string, status: string) {
+  const lines: Record<string, string> = {
+    new: "Your bespoke trip brief is in our queue — we'll assign a designer shortly.",
+    contacted: "We're actively reviewing your trip details and will follow up with ideas or questions soon.",
+    closed: "This enquiry is marked closed on our side. If your plans change, reach out anytime — we'd love to help.",
+  };
+  const body =
+    lines[status] ?? `Your custom trip request is now updated (${status.replace(/_/g, " ")}).`;
+  const inner =
+    emailParagraph(`Dear ${escapeHtml(name)},`) +
+    emailParagraph(body) +
+    emailMutedNote(`Questions? ${escapeHtml(SITE.email)}`);
+
+  return {
+    subject: `${brand} — Update on your custom trip request`,
+    html: emailShell({
+      preheader: "An update from our travel desk.",
+      headline: "Your request",
+      innerHtml: inner,
+      variant: "guest",
+    }),
+    text: `Dear ${name},\n\n${body}\n\n${brand}`,
+  };
+}
+
 export function adminCustomTripEmail(data: {
   name: string;
   email: string;
@@ -597,7 +649,7 @@ export function adminCustomTripEmail(data: {
       row("Activity level", data.activityLevel),
       row("Notes", data.notes?.trim() || "—"),
     ]) +
-    emailPrimaryButton(`${adminSiteUrl}/admin/crm`, "CRM inbox");
+    emailPrimaryButton(`${adminSiteUrl}/admin/custom-trips`, "Manage — Custom trips");
 
   return {
     subject: `[${brand}] Custom trip · ${data.name}`,

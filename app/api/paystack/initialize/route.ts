@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { envPaystackSecretKey, envSiteUrl } from "@/lib/server-env";
 
 const schema = z.object({
   email: z.string().email(),
@@ -15,8 +16,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
   }
   const { email, amount, reference, callbackUrl } = parsed.data;
-  const secret = process.env.PAYSTACK_SECRET_KEY;
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+  const secret = envPaystackSecretKey();
+  const siteUrl = envSiteUrl() || "http://localhost:3000";
   if (!secret) {
     return NextResponse.json(
       {

@@ -1,12 +1,13 @@
 import { NextResponse } from "next/server";
 import { completeSuccessfulGatewayPayment } from "@/lib/complete-payment";
+import { envFlutterwaveWebhookSecretHash } from "@/lib/server-env";
 
 /**
  * Flutterwave dashboard → Webhooks → URL: {NEXT_PUBLIC_SITE_URL}/api/flutterwave/webhook
- * Set "Secret hash" in Flutterwave and copy to FLUTTERWAVE_SECRET_HASH in your env.
+ * Set "Secret hash" in Flutterwave → `FLUTTERWAVE_SECRET_HASH` or `FLUTTERWAVE_WEBHOOK_SECRET`.
  */
 export async function POST(request: Request) {
-  const secretHash = process.env.FLUTTERWAVE_SECRET_HASH;
+  const secretHash = envFlutterwaveWebhookSecretHash();
   const verifHash = request.headers.get("verif-hash");
 
   const raw = await request.json().catch(() => null) as {

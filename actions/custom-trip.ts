@@ -32,25 +32,30 @@ export async function submitCustomTrip(
   if (!parsed.success) {
     return { ok: false, error: "Check required fields" };
   }
-  const { travelStart, travelEnd, ...rest } = parsed.data;
-  if (!isDbConfigured()) {
-    revalidatePath("/custom-trip");
-    return { ok: true };
+  const { travelStart: ts, travelEnd: te, ...rest } = parsed.data;
+  const travelStart = ts ? new Date(ts) : undefined;
+  const travelEnd = te ? new Date(te) : undefined;
+
+  let travelStartOut = travelStart;
+  let travelEndOut = travelEnd;
+
+  if (isDbConfigured()) {
+    const conn = await connectDB();
+    if (conn) {
+      const doc = await CustomTripRequest.create({
+        ...rest,
+        travelStart,
+        travelEnd,
+      });
+      travelStartOut = doc.travelStart ?? travelStart;
+      travelEndOut = doc.travelEnd ?? travelEnd;
+    }
   }
-  const conn = await connectDB();
-  if (!conn) {
-    revalidatePath("/custom-trip");
-    return { ok: true };
-  }
-  const doc = await CustomTripRequest.create({
-    ...rest,
-    travelStart: travelStart ? new Date(travelStart) : undefined,
-    travelEnd: travelEnd ? new Date(travelEnd) : undefined,
-  });
+
   await sendCustomTripEmails({
     ...rest,
-    travelStart: doc.travelStart ?? undefined,
-    travelEnd: doc.travelEnd ?? undefined,
+    travelStart: travelStartOut,
+    travelEnd: travelEndOut,
   });
   revalidatePath("/custom-trip");
   return { ok: true };

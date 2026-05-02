@@ -94,7 +94,11 @@ export default async function AdminCrmPage() {
             <tbody>
               {customLatest.map((row) => (
                 <tr key={row.id} className="border-b border-zinc-50 align-top">
-                  <td className="p-3">{row.name}</td>
+                  <td className="p-3">
+                    <Link className="font-medium text-gold-dark underline hover:text-gold" href={`/admin/custom-trips/${row.id}`}>
+                      {row.name}
+                    </Link>
+                  </td>
                   <td className="break-all p-3 font-mono text-xs">{row.email}</td>
                   <td className="p-3">{row.destination || "—"}</td>
                   <td className="p-3 capitalize">{row.status}</td>
@@ -129,7 +133,11 @@ export default async function AdminCrmPage() {
             <tbody>
               {corpLatest.map((row) => (
                 <tr key={row.id} className="border-b border-zinc-50 align-top">
-                  <td className="p-3">{row.company}</td>
+                  <td className="p-3">
+                    <Link className="font-medium text-gold-dark underline hover:text-gold" href={`/admin/corporate/${row.id}`}>
+                      {row.company}
+                    </Link>
+                  </td>
                   <td className="p-3">{row.contactName}</td>
                   <td className="break-all p-3 font-mono text-xs">{row.email}</td>
                   <td className="p-3 capitalize">{row.status.replace(/_/g, " ")}</td>
@@ -149,7 +157,9 @@ export default async function AdminCrmPage() {
       </section>
 
       <p className="text-xs text-zinc-600">
-        To change a lead’s stage, follow up by email or contact your administrator if you need changes in the system.
+        Open a name to manage that lead —{" "}
+        <Link href="/admin/custom-trips">Custom trips</Link> &amp;{" "}
+        <Link href="/admin/corporate">Corporate</Link>.
       </p>
     </div>
   );

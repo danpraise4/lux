@@ -22,7 +22,9 @@ export function CorporateForm() {
     return (
       <div className="rounded-2xl border border-gold/30 bg-gold/5 p-6 text-sm">
         <p className="font-serif text-xl text-ink">We&apos;re on it.</p>
-        <p className="mt-2 text-muted">Expect a call or email to align on scope, travel policy, and budget bands.</p>
+        <p className="mt-2 text-muted">
+          We&apos;ve emailed you a confirmation. Expect a call or email to align on scope, travel policy, and budget bands.
+        </p>
       </div>
     );
   }

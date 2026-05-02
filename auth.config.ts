@@ -1,4 +1,5 @@
 import type { NextAuthConfig } from "next-auth";
+import { envAuthSecret } from "@/lib/server-env";
 
 /**
  * Edge-compatible auth config — no mongoose, bcrypt, or Node-only deps.
@@ -10,7 +11,7 @@ export const authConfig: NextAuthConfig = {
   },
   providers: [],
   trustHost: true,
-  secret: process.env.AUTH_SECRET ?? process.env.NEXTAUTH_SECRET,
+  secret: envAuthSecret(),
   session: { strategy: "jwt", maxAge: 30 * 24 * 60 * 60 },
   callbacks: {
     async jwt({ token, user }) {

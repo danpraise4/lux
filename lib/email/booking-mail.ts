@@ -12,11 +12,12 @@ import {
   guestTripPricingUpdatedEmail,
 } from "@/lib/email/templates";
 import { SITE } from "@/lib/constants";
+import { envSiteUrl } from "@/lib/server-env";
 import type { Booking } from "@/models/Booking";
 
 function bookingManageUrl(token?: string | null): string {
   if (!token) return "";
-  const base = (process.env.NEXT_PUBLIC_SITE_URL || SITE.url || "http://localhost:3000").replace(/\/$/, "");
+  const base = (envSiteUrl() || SITE.url || "http://localhost:3000").replace(/\/$/, "");
   return `${base}/booking/manage/${encodeURIComponent(token)}`;
 }
 

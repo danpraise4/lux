@@ -1,6 +1,7 @@
 import { isDbConfigured, connectDB } from "@/lib/mongodb";
 import EmailLog from "@/models/EmailLog";
 import { FollowUpEmailForm } from "@/components/admin/follow-up-email-form";
+import { envResendApiKey } from "@/lib/server-env";
 
 export default async function AdminEmailsPage() {
   let logs: { id: string; to: string; subject: string; ok: boolean; createdAt?: Date | null }[] = [];
@@ -27,7 +28,7 @@ export default async function AdminEmailsPage() {
     }
   }
 
-  const mailConfigured = Boolean(process.env.RESEND_API_KEY);
+  const mailConfigured = Boolean(envResendApiKey());
 
   return (
     <div className="min-w-0 space-y-8">

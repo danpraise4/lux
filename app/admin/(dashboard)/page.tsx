@@ -157,6 +157,12 @@ export default async function AdminHomePage() {
             </Link>
           </Button>
           <Button asChild variant="outline" size="sm">
+            <Link href="/admin/custom-trips">
+              <Sparkles className="h-4 w-4" />
+              Custom trip requests
+            </Link>
+          </Button>
+          <Button asChild variant="outline" size="sm">
             <Link href="/admin/corporate">
               <Building2 className="h-4 w-4" />
               Corporate leads

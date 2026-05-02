@@ -1,13 +1,25 @@
+import { isResendFromConfigured } from "@/lib/email-from-env";
+import {
+  envAdminNotificationEmailRaw,
+  envFlutterwaveSecretKey,
+  envFlutterwaveWebhookSecretHash,
+  envMongoUri,
+  envPaystackPublicKey,
+  envPaystackSecretKey,
+  envResendApiKey,
+  envSiteUrl,
+} from "@/lib/server-env";
+
 export default function AdminSettingsPage() {
-  const mongo = Boolean(process.env.MONGODB_URI);
-  const paystackPublic = Boolean(process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY);
-  const paystackSecret = Boolean(process.env.PAYSTACK_SECRET_KEY);
-  const flutterwaveSecret = Boolean(process.env.FLUTTERWAVE_SECRET_KEY);
-  const flutterwaveWebhookHash = Boolean(process.env.FLUTTERWAVE_SECRET_HASH);
-  const resend = Boolean(process.env.RESEND_API_KEY);
-  const emailFrom = Boolean(process.env.EMAIL_FROM);
-  const adminNotify = Boolean(process.env.ADMIN_NOTIFICATION_EMAIL);
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim() || "";
+  const mongo = Boolean(envMongoUri());
+  const paystackPublic = Boolean(envPaystackPublicKey());
+  const paystackSecret = Boolean(envPaystackSecretKey());
+  const flutterwaveSecret = Boolean(envFlutterwaveSecretKey());
+  const flutterwaveWebhookHash = Boolean(envFlutterwaveWebhookSecretHash());
+  const resend = Boolean(envResendApiKey());
+  const emailFrom = isResendFromConfigured();
+  const adminNotify = Boolean(envAdminNotificationEmailRaw());
+  const siteUrl = envSiteUrl() || "";
 
   const rows = [
     { label: "Database", ok: mongo, detail: mongo ? "Connected" : "Not connected" },

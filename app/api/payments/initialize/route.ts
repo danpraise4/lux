@@ -3,6 +3,11 @@ import { z } from "zod";
 import { connectDB, isDbConfigured } from "@/lib/mongodb";
 import Booking from "@/models/Booking";
 import { balancePaymentTxRef } from "@/lib/payment-tx-ref";
+import {
+  envFlutterwaveSecretKey,
+  envPaystackSecretKey,
+  envSiteUrl,
+} from "@/lib/server-env";
 
 const checkoutSchema = z.object({
   email: z.string().email(),
@@ -27,10 +32,10 @@ type CheckoutInput = {
 
 async function startGatewayCheckout(input: CheckoutInput): Promise<NextResponse> {
   const { email, amount, reference, name, phone, callbackUrl, description } = input;
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+  const siteUrl = envSiteUrl() || "http://localhost:3000";
   const returnUrl = callbackUrl || `${siteUrl}/booking/confirmation`;
 
-  const fwSecret = process.env.FLUTTERWAVE_SECRET_KEY;
+  const fwSecret = envFlutterwaveSecretKey();
   if (fwSecret) {
     const res = await fetch("https://api.flutterwave.com/v3/payments", {
       method: "POST",
@@ -68,7 +73,7 @@ async function startGatewayCheckout(input: CheckoutInput): Promise<NextResponse>
     );
   }
 
-  const paystackSecret = process.env.PAYSTACK_SECRET_KEY;
+  const paystackSecret = envPaystackSecretKey();
   if (paystackSecret) {
     const amountKobo = Math.round(amount * 100);
     const paystackCallback =

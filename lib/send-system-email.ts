@@ -1,5 +1,7 @@
 import { connectDB, isDbConfigured } from "@/lib/mongodb";
 import EmailLog from "@/models/EmailLog";
+import { getResendFromAddress } from "@/lib/email-from-env";
+import { envResendApiKey } from "@/lib/server-env";
 
 export type SendSystemEmailResult =
   | { ok: true; skipped?: boolean; message?: string }
@@ -18,8 +20,8 @@ export async function sendSystemTransactionalEmail(opts: {
 }): Promise<SendSystemEmailResult> {
   const { to, subject, text, html, logSentBy = "system" } = opts;
   const snippet = text.slice(0, 160);
-  const key = process.env.RESEND_API_KEY;
-  const from = process.env.EMAIL_FROM || "NMA Luxe <notifications@example.com>";
+  const key = envResendApiKey();
+  const from = getResendFromAddress();
 
   if (!key) {
     if (isDbConfigured()) {
@@ -37,7 +39,7 @@ export async function sendSystemTransactionalEmail(opts: {
     }
     return {
       ok: false,
-      error: "Outgoing mail is not configured (RESEND_API_KEY / EMAIL_FROM).",
+      error: "Outgoing mail is not configured (RESEND_API_KEY and EMAIL_FROM or RESEND_FROM_EMAIL).",
     };
   }
 

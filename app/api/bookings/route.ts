@@ -6,6 +6,7 @@ import { DEFAULT_DEPOSIT_PERCENT } from "@/lib/constants";
 import { makeBookingRef } from "@/lib/booking-ref";
 import { generateManageToken } from "@/lib/manage-token";
 import Booking from "@/models/Booking";
+import { envPaystackPublicKey } from "@/lib/server-env";
 import PackageModel from "@/models/Package";
 
 const bodySchema = z.object({
@@ -61,7 +62,7 @@ export async function POST(request: Request) {
       priceTotal,
       amountDueNow,
       paymentChoice,
-      paystackKey: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || "",
+      paystackKey: envPaystackPublicKey() || "",
       email: b.leadEmail,
     });
   }
@@ -99,7 +100,7 @@ export async function POST(request: Request) {
     priceTotal,
     amountDueNow,
     paymentChoice,
-    paystackKey: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || "",
+    paystackKey: envPaystackPublicKey() || "",
     email: b.leadEmail,
   });
 }

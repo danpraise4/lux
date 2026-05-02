@@ -4,7 +4,9 @@ import {
   adminCorporateLeadEmail,
   adminCustomTripEmail,
   adminNewsletterSignupEmail,
+  guestCorporateStatusEmail,
   guestCorporateThankYouEmail,
+  guestCustomTripStatusEmail,
   guestCustomTripThankYouEmail,
   guestNewsletterWelcomeEmail,
 } from "@/lib/email/templates";
@@ -83,6 +85,46 @@ export async function sendCustomTripEmails(data: {
       text: admin.text,
       html: admin.html,
       logSentBy: "custom-trip-admin",
+    });
+  } catch {
+    /* ignore */
+  }
+}
+
+/** Optional ping when staff moves stage from admin (checkbox). Non-blocking. */
+export async function sendCustomTripStatusNotification(opts: {
+  email: string;
+  name: string;
+  status: string;
+}): Promise<void> {
+  try {
+    const guest = guestCustomTripStatusEmail(opts.name, opts.status);
+    await sendSystemTransactionalEmail({
+      to: [opts.email],
+      subject: guest.subject,
+      text: guest.text,
+      html: guest.html,
+      logSentBy: "custom-trip-status-guest",
+    });
+  } catch {
+    /* ignore */
+  }
+}
+
+export async function sendCorporateStatusNotification(opts: {
+  email: string;
+  contactName: string;
+  company: string;
+  status: string;
+}): Promise<void> {
+  try {
+    const guest = guestCorporateStatusEmail(opts.contactName, opts.company, opts.status);
+    await sendSystemTransactionalEmail({
+      to: [opts.email],
+      subject: guest.subject,
+      text: guest.text,
+      html: guest.html,
+      logSentBy: "corporate-status-guest",
     });
   } catch {
     /* ignore */

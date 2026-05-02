@@ -18,6 +18,7 @@ import {
   PanelLeftClose,
   Menu,
   MapPin,
+  Sparkles,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -33,6 +34,7 @@ const nav = [
   { href: "/admin/payments", label: "Payments", icon: CreditCard },
   { href: "/admin/users", label: "People & subscribers", icon: UsersRound },
   { href: "/admin/crm", label: "CRM inbox", icon: Users },
+  { href: "/admin/custom-trips", label: "Custom trips", icon: Sparkles },
   { href: "/admin/corporate", label: "Corporate", icon: Building2 },
   { href: "/admin/gallery", label: "Homepage gallery", icon: ImageIcon },
   { href: "/admin/newsletter", label: "Newsletter", icon: Mail },
