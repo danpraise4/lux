@@ -154,6 +154,12 @@ export function SiteFooter() {
             {SITE.phone}
           </a>
           <a
+            href={`tel:${SITE.phoneSecondary.slice(1)}`}
+            className="block break-words font-serif text-xl text-ink sm:text-2xl"
+          >
+            {SITE.phoneSecondary}
+          </a>
+          <a
             className="block break-all text-sm font-medium text-ink sm:break-words"
             href="mailto:hello@nmaluxe.com.ng"
           >

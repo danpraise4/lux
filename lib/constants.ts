@@ -7,6 +7,7 @@ export const SITE = {
   url: process.env.NEXT_PUBLIC_SITE_URL || "https://nmaluxe.com.ng",
   email: "hello@nmaluxe.com.ng",
   phone: "+234 805 544 7701",
+  phoneSecondary: "+234 701 000 2587",
   address: "Lagos, Nigeria",
   serviceCities: ["Jos", "Lagos", "Port Harcourt", "Owerri"] as const,
 } as const;
